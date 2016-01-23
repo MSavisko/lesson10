@@ -20,6 +20,7 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    }
 }
 
 - (void)viewDidLayoutSubviews {
@@ -43,12 +44,24 @@
 					 animations:^(void) {
 						 [self.view layoutIfNeeded];
 					 }
-					 completion:NULL];
+                     completion:^(BOOL finished) {
+                         [self buttonRotation];
+                     }];
 	
 }
 
 - (IBAction)buttonTapped:(id)sender {
 	NSLog(@"Tap");
+}
+
+- (void) buttonRotation {
+    [UIView animateWithDuration:1.0
+                          delay:0.0f
+                        options:UIViewAnimationOptionAllowUserInteraction
+                     animations:^(void) {
+                         self.button.transform = CGAffineTransformMakeRotation(M_PI);
+                     }
+                     completion:NULL];
 }
 
 @end

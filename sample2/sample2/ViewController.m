@@ -69,13 +69,13 @@
 	//	UIView transition
 	
 	UIView *view = [[UIView alloc] initWithFrame:self.view.bounds];
-	view.tag = 1;
+	//view.tag = 1;
 	view.backgroundColor = [UIColor brownColor];
 	[self.view addSubview:view];
 	
 	
 	UIView *toView = [[UIView alloc] initWithFrame:self.view.bounds];
-	toView.tag = 2;
+	//toView.tag = 2;
 	toView.backgroundColor = [UIColor blueColor];
 	
 //	[UIView transitionWithView:self.view
@@ -89,7 +89,7 @@
 	
 	[UIView transitionFromView:view
 						toView:toView
-					  duration:0.5f
+					  duration:3.0f
 					   options:UIViewAnimationOptionTransitionCrossDissolve
 					completion:NULL];
 }
