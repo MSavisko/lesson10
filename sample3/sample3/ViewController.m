@@ -58,7 +58,7 @@
                         options:UIViewAnimationOptionAllowUserInteraction
                      animations:^(void) {
                          CGFloat radians = atan2f(self.button.transform.b, self.button.transform.a);
-                         self.button.transform = CGAffineTransformMakeRotation(radians + M_PI);
+                         self.button.transform = CGAffineTransformMakeRotation(radians - M_PI);
                      }
                      completion:NULL];
 }
