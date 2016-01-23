@@ -12,6 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *xconstraint;
 @property (weak, nonatomic) IBOutlet UIButton *button;
+@property (nonatomic) NSInteger tapCount;
 
 @end
 
@@ -29,27 +30,34 @@
 
 - (void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
-	
+    self.tapCount = 0;
+    
 	for (NSLayoutConstraint *constraint in self.view.constraints) {
 		if (constraint.firstAttribute == NSLayoutAttributeCenterX) {
 			constraint.constant = 100.0f;
 			break;
 		}
 	}
+    [self movementAnimation];
+	
+}
 
-	[UIView animateWithDuration:4.4
-						  delay:0.0f
-						options:UIViewAnimationOptionAllowUserInteraction
-					 animations:^(void) {
-						 [self.view layoutIfNeeded];
-					 }
+- (void) movementAnimation {
+    if (self.xconstraint.constant == 100.f) {
+        self.xconstraint.constant = -100.f;
+    } else self.xconstraint.constant = 100.f;
+    [UIView animateWithDuration:4.4
+                          delay:0.0f
+                        options:UIViewAnimationOptionAllowUserInteraction
+                     animations:^(void) {
+                         [self.view layoutIfNeeded];
+                     }
                      completion:^(BOOL finished) {
                          [self buttonRotation];
                          dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                                [self MovementAnimation];
+                             [self movementAnimation];
                          });
                      }];
-	
 }
 
 - (void) buttonRotation {
@@ -63,29 +71,20 @@
                      completion:NULL];
 }
 
-- (void) MovementAnimation {
-    if (self.xconstraint.constant == 100.f) {
-        self.xconstraint.constant = -100.f;
-    } else self.xconstraint.constant = 100.f;
-    [UIView animateWithDuration:4.4
-                          delay:0.0f
-                        options:UIViewAnimationOptionAllowUserInteraction
-                     animations:^(void) {
-                         [self.view layoutIfNeeded];
-                     }
-                     completion:^(BOOL finished) {
-                         [self buttonRotation];
-                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                             [self MovementAnimation];
-                         });
-                         NSLog(@"Back animation finished");
-                     }];
+-(void) touchesBegan:(NSSet*) touches withEvent:(UIEvent *) event {
+    CGPoint point = [[touches anyObject] locationInView:self.view];
+    if([self.button.layer.presentationLayer hitTest:point]) {
+        self.button.highlighted = YES;
+        [self.button performSelector:@selector(setHighlighted:) withObject:NULL afterDelay:0.25];
+        [self.button sendActionsForControlEvents:UIControlEventTouchUpInside];
+    }
 }
+
 
 - (IBAction)buttonTapped:(id)sender {
-	NSLog(@"Tap");
+    self.tapCount++;
+	NSLog(@"Tap #%ld", (long)self.tapCount);
 }
-
 
 
 @end
