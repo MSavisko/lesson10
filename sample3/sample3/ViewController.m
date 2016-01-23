@@ -20,7 +20,6 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    }
 }
 
 - (void)viewDidLayoutSubviews {
@@ -46,12 +45,11 @@
 					 }
                      completion:^(BOOL finished) {
                          [self buttonRotation];
+                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                [self MovementAnimation];
+                         });
                      }];
 	
-}
-
-- (IBAction)buttonTapped:(id)sender {
-	NSLog(@"Tap");
 }
 
 - (void) buttonRotation {
@@ -59,9 +57,35 @@
                           delay:0.0f
                         options:UIViewAnimationOptionAllowUserInteraction
                      animations:^(void) {
-                         self.button.transform = CGAffineTransformMakeRotation(M_PI);
+                         CGFloat radians = atan2f(self.button.transform.b, self.button.transform.a);
+                         self.button.transform = CGAffineTransformMakeRotation(radians + M_PI);
                      }
                      completion:NULL];
 }
+
+- (void) MovementAnimation {
+    if (self.xconstraint.constant == 100.f) {
+        self.xconstraint.constant = -100.f;
+    } else self.xconstraint.constant = 100.f;
+    [UIView animateWithDuration:4.4
+                          delay:0.0f
+                        options:UIViewAnimationOptionAllowUserInteraction
+                     animations:^(void) {
+                         [self.view layoutIfNeeded];
+                     }
+                     completion:^(BOOL finished) {
+                         [self buttonRotation];
+                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                             [self MovementAnimation];
+                         });
+                         NSLog(@"Back animation finished");
+                     }];
+}
+
+- (IBAction)buttonTapped:(id)sender {
+	NSLog(@"Tap");
+}
+
+
 
 @end
