@@ -17,6 +17,7 @@
     UIDynamicAnimator* _animator;
     UIGravityBehavior* _gravity;
     UICollisionBehavior* _collision;
+    int _random;
 }
 
 - (void)viewDidLoad {
@@ -39,12 +40,39 @@
 -(void) touchesBegan:(NSSet*) touches withEvent:(UIEvent *) event {
     CGPoint point = [[touches anyObject] locationInView:self.view];
     
-    UIView * square = [[UIView alloc] initWithFrame:CGRectMake(point.x, point.y, 50, 50)];
-    square.backgroundColor = [UIColor grayColor];
+    int random = arc4random()%2;
+    _random = random;
+    if (random == 0) {
+        UIView * square = [[UIView alloc] initWithFrame:CGRectMake(point.x, point.y, 50, 50)];
+        square.backgroundColor = [UIColor grayColor];
+        
+        [self.view addSubview:square];
+        [_gravity addItem:square];
+        [_collision addItem:square];
+        
+    }
+    else {
+        UIView * circle = [[UIView alloc] initWithFrame:CGRectMake(point.x, point.y, 50, 50)];
+        circle.backgroundColor = [UIColor redColor];
+        circle.layer.cornerRadius = circle.bounds.size.width/2;
+        circle.clipsToBounds = YES;
+        
+        circle.layer.borderColor = [UIColor redColor].CGColor;
+        circle.layer.borderWidth = 1;
+        [self.view addSubview:circle];
+        [_gravity addItem:circle];
+        [_collision addItem:circle];
+    }
     
-    [self.view addSubview:square];
-    [_gravity addItem:square];
-    [_collision addItem:square];
+}
+
+-(UIDynamicItemCollisionBoundsType) collisionBoundsType
+{
+    if (_random == 0) {
+        return UIDynamicItemCollisionBoundsTypeRectangle;
+    } else {
+        return UIDynamicItemCollisionBoundsTypeEllipse;
+    }
 }
 
 @end
